@@ -57,7 +57,6 @@ public class RhythmState extends DefaultGameState {
 		background = new Image("res/background.jpg");
 		background = background.getScaledCopy(gc.getWidth(), gc.getHeight());
 
-		BeatmapParser beatmapparser = new BeatmapParser();
 		String beatmapzipfilename = "725875 Sanshuu Chuugaku Yuushabu - Hoshi to Hana.osz";
 		String beatmaporigin = "res/sample_osu_beatmaps/";
 		beatmap = BeatmapParser.parseOsuBeatmaps(

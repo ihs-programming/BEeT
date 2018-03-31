@@ -66,7 +66,6 @@ public class BeatmapParser {
 			String line;
 			while ((line = br.readLine()) != null) {
 				osufileparsed.add(line);
-				System.out.println(line);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -17,7 +17,7 @@ import org.newdawn.slick.state.StateBasedGame;
 
 public class RhythmState extends DefaultGameState{
 
-	public final float CIRCLE_TIME = 500f; //time it takes for circles to shrink. the time the circles are on screen is double this, as the circles grow, then shrink.
+	public final float CIRCLE_TIME = 600f; //time it takes for circles to shrink. the time the circles are on screen is double this, as the circles grow, then shrink.
 	
 	private float circleTime = -1f; //changing this doesn't do anything. must be negative, however
 	private Image background; //background image
@@ -117,6 +117,7 @@ public class RhythmState extends DefaultGameState{
 				if ((!hitobject.clicked)&&((new Vector2f(x, y).distance(new Vector2f(hitobject.x, hitobject.y))) < hitobject.radius)) { //checks if current circle has already been clicked, then checks if click is within the circle
 					hitobjects.set(hitobjects.indexOf(hitobject), new HitObject(hitobject.x, hitobject.y, hitobject.radius, hitobject.duration, true));
 					points++;
+					break;
 				}
 			}
 		}

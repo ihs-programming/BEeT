@@ -55,7 +55,7 @@ public class RhythmState extends DefaultGameState{
 		String beatmapzipfilename = "725875 Sanshuu Chuugaku Yuushabu - Hoshi to Hana.osz";
 		String beatmaporigin = "res/sample_osu_beatmaps/";
 		String beatmappath = "res/beatmaps/";
-		String beatmapfilename = "/Sanshuu Chuugaku Yuushabu - Hoshi to Hana (Mir) [Easy].osu";
+		String beatmapfilename = "/Sanshuu Chuugaku Yuushabu - Hoshi to Hana (Mir) [Insane].osu";
 		
 		beatmapparser.extractOsuZip(beatmapzipfilename, beatmaporigin, beatmappath);
 		

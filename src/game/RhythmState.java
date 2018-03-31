@@ -1,6 +1,5 @@
 package game;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -17,7 +16,7 @@ import org.newdawn.slick.state.StateBasedGame;
 
 public class RhythmState extends DefaultGameState{
 
-	public final float CIRCLE_TIME = 600f; //time it takes for approach circles to shrink.
+	public final float CIRCLE_TIME = 1000f; //time it takes for approach circles to shrink.
 	public final float LENIENCE_TIME = 200f; //lenience, in ms, given to the player to click the hit object
 	
 	private Image background; //background image
@@ -106,10 +105,6 @@ public class RhythmState extends DefaultGameState{
 			}
 		}
 		
-	}
-	
-	private double randomRange(float lower, float upper) {
-		return Math.random() * (upper - lower) + lower;
 	}
 	
 	@Override

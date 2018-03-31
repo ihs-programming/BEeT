@@ -1,5 +1,6 @@
 package game;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -54,7 +55,16 @@ public class RhythmState extends DefaultGameState{
 		background = background.getScaledCopy(gc.getWidth(), gc.getHeight());
 
 		BeatmapParser beatmapparser = new BeatmapParser();
-		beatmap = beatmapparser.parseBeatmap();
+		String beatmapzipfilename = "725875 Sanshuu Chuugaku Yuushabu - Hoshi to Hana.osz";
+		String beatmaporigin = "res/sample_osu_beatmaps/";
+		String beatmappath = "res/beatmaps/";
+		String beatmapfilename = "/Sanshuu Chuugaku Yuushabu - Hoshi to Hana (Mir) [Insane].osu";
+		
+		beatmapparser.extractOsuZip(beatmapzipfilename, beatmaporigin, beatmappath);
+		
+		beatmappath = beatmappath.concat(beatmapzipfilename).concat(beatmapfilename);
+		
+		beatmap = beatmapparser.parseBeatmap(new File(beatmappath));
 	}
 
 	@Override

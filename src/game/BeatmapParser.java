@@ -3,64 +3,47 @@ package game;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 import utils.UnzipUtility;
 
 public class BeatmapParser {
-	/**
-	 * Takes the file named beatmapfilename in folder beatmaporigin and extracts it
-	 * to a folder named beatmapfilename in beatmappath
-	 * 
-	 * @param beatmapfilename
-	 * @param beatmaporigin
-	 * @param beatmappath
-	 */
-	public void extractOsuZip(String beatmapfilename, String beatmaporigin,
-			String beatmappath) {
-		beatmaporigin = beatmaporigin.concat(beatmapfilename);
-		beatmappath = beatmappath.concat(beatmapfilename);
-		UnzipUtility beatmapunzipper = new UnzipUtility();
-		try {
-			beatmapunzipper.unzip(beatmaporigin, beatmappath);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+
+	public static final String DEFAULT_BEATMAP_FOLDER = "res/beatmaps/";
 
 	/**
-	 * Takes the file named beatmapfilename in folder beatmaporigin and extracts it
-	 * to the default beatmap folder (res/beatmaps/)
-	 * 
-	 * @param beatmapfilename
-	 * @param beatmaporigin
+	 * Parses an all of the beatmaps out of an osz file
+	 *
+	 * @param oszfilename
+	 * @return
 	 */
-	public void extractOsuZip(String beatmapfilename, String beatmaporigin) {
-		beatmaporigin = beatmaporigin.concat(beatmapfilename);
-		String beatmappath = "res/beatmaps/";
-		UnzipUtility beatmapunzipper = new UnzipUtility();
-		try {
-			beatmapunzipper.unzip(beatmaporigin, beatmappath);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	public static LinkedList<Beat>[] parseOsuBeatmaps(String oszfilename) {
+		String osufilename = Paths.get(oszfilename).getFileName().toString();
+		String beatmapFolder = Paths.get(DEFAULT_BEATMAP_FOLDER, osufilename).toString();
+		extractOsuZip(oszfilename, beatmapFolder);
+		File[] osufiles = new File(beatmapFolder)
+				.listFiles((FilenameFilter) (dir, name) -> name.endsWith(".osu"));
+		LinkedList<Beat>[] beatmaps = new LinkedList[osufiles.length];
+		for (int i = 0; i < osufiles.length; i++) {
+			beatmaps[i] = parseBeatmap(osufiles[i]);
 		}
+		return beatmaps;
 	}
 
 	/**
 	 * Takes the file with filepath beatmapfilepath and extracts it to the default
 	 * beatmap folder (res/beatmaps/)
-	 * 
+	 *
 	 * @param beatmapfilepath
 	 */
-	public void extractOsuZip(String beatmapfilepath) {
-		String beatmappath = "res/beatmaps/";
+	private static void extractOsuZip(String beatmapfilepath, String beatmapFolder) {
 		UnzipUtility beatmapunzipper = new UnzipUtility();
 		try {
-			beatmapunzipper.unzip(beatmapfilepath, beatmappath);
+			beatmapunzipper.unzip(beatmapfilepath, beatmapFolder);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -70,11 +53,11 @@ public class BeatmapParser {
 	/**
 	 * Takes a beatmap file (.osu) and converts it to a LinkedList comprised of the
 	 * beats
-	 * 
+	 *
 	 * @param osufile
 	 * @return
 	 */
-	public LinkedList<Beat> parseBeatmap(File osufile) {
+	private static LinkedList<Beat> parseBeatmap(File osufile) {
 		String hitobjectmarker = "[HitObjects]";
 		ArrayList<String> osufileparsed = new ArrayList<>();
 		BufferedReader br = null;

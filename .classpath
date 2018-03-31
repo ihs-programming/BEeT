@@ -14,7 +14,7 @@
 	<classpathentry kind="lib" path="lib/slick/lib/natives-mac.jar"/>
 	<classpathentry kind="lib" path="lib/slick/lib/natives-windows.jar"/>
 	<classpathentry kind="lib" path="lib/slick/lib/slick-examples.jar"/>
-	<classpathentry kind="lib" path="lib/slick/lib/slick.jar">
+	<classpathentry kind="lib" path="lib/slick/lib/slick.jar" sourcepath="lib/slick/src">
 		<attributes>
 			<attribute name="javadoc_location" value="jar:platform:/resource/BEeT/lib/slick/javadoc.zip!/"/>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="BEeT/lib/slick"/>

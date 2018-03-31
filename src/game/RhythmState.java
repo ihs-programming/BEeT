@@ -17,16 +17,15 @@ import org.newdawn.slick.state.StateBasedGame;
 
 public class RhythmState extends DefaultGameState{
 
-	public final float CIRCLE_TIME = 600f; //time it takes for circles to shrink. the time the circles are on screen is double this, as the circles grow, then shrink.
+	public final float CIRCLE_TIME = 600f; //time it takes for approach circles to shrink.
+	public final float LENIENCE_TIME = 200f; //lenience, in ms, given to the player to click the hit object
 	
-	private float circleTime = -1f; //changing this doesn't do anything. must be negative, however
 	private Image background; //background image
-	private float timescale = .10f; //rate at which circles shrink. doesn't change the time circles are on screen, however
+	private float timescale = .08f; //rate at which approach circles shrink. doesn't change the time circles are on screen, however
 	private int points = 0; //total number of points
-	private boolean clicked = false; //whether or not the current circle has been clicked
-	private boolean nextcircleclicked = false; //whether or not the next circle has been clicked
 
-	private float maxRadius = CIRCLE_TIME * timescale; //maximum radius of the circles
+	private float maxRadius = CIRCLE_TIME * timescale; //maximum radius of the approach circles
+	private float innerRadius = 20f; //radius of the inner hit circles which you click
 	
 	private long starttime = System.currentTimeMillis(); //initial time
 	private long songtime = 0; //time since beginning of the song, in ms
@@ -64,13 +63,21 @@ public class RhythmState extends DefaultGameState{
 	public void render(GameContainer gc, StateBasedGame arg1, Graphics g) throws SlickException {
 		g.drawImage(background, 0, 0);
 		
-		for (HitObject hitobject:hitobjects) {
-			if (hitobject.clicked) {
+		for (HitObject hitobject:hitobjects) { //this for loop draws all the hit objects
+			int index = hitobjects.indexOf(hitobject);
+			if (index != hitobjects.size() - 1) { //check to make sure hitobject is not the last in the list
+				g.setLineWidth(5f);
+				g.setColor(Color.white);
+				g.draw(new Line(new Vector2f(hitobject.x, hitobject.y), new Vector2f(hitobjects.get(index+1).x, hitobjects.get(index+1).y))); //draws a line in between consecutive hit objects
+			}
+			if (hitobject.clicked) { //changes color based on the state of the circle
 				g.setColor(Color.green);
 			} else {
 				g.setColor(Color.white);
 			}
-			g.fill(new Circle(hitobject.x, hitobject.y, hitobject.radius));
+			g.setLineWidth(2f);
+			g.draw(new Circle(hitobject.x, hitobject.y, hitobject.radius+innerRadius)); //draws approach circle
+			g.fill(new Circle(hitobject.x, hitobject.y, innerRadius)); //draws hit circle
 		}
 		
 		g.setColor(Color.white);
@@ -82,7 +89,7 @@ public class RhythmState extends DefaultGameState{
 	public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
 		songtime += delta;
 		
-		if ((beatmapindex<=beatmap.size()-1)&&(beatmap.get(beatmapindex).time<=songtime)) {
+		if ((beatmapindex<=beatmap.size()-1)&&(beatmap.get(beatmapindex).time<=CIRCLE_TIME+songtime)) { //puts objects in the beatmap into the hitobjects list when needed
 			Beat currentbeat = beatmap.get(beatmapindex);
 			HitObject hitobject = new HitObject(currentbeat.x, currentbeat.y, maxRadius, CIRCLE_TIME, false);
 			hitobjects.add(hitobject);
@@ -92,8 +99,8 @@ public class RhythmState extends DefaultGameState{
 		if (!hitobjects.isEmpty()) {
 			for (HitObject hitobject:hitobjects) {
 				int index = hitobjects.indexOf(hitobject);
-				hitobjects.set(index, new HitObject(hitobject.x, hitobject.y, maxRadius * (hitobject.duration / CIRCLE_TIME), hitobject.duration - delta, hitobject.clicked));
-				if (hitobject.duration<=0) {
+				hitobjects.set(index, new HitObject(hitobject.x, hitobject.y, maxRadius * (hitobject.duration / CIRCLE_TIME), hitobject.duration - delta, hitobject.clicked)); //shrinks approach circle and reduces remaining time on screen
+				if ((hitobject.duration<=-LENIENCE_TIME)||((hitobject.clicked)&&(hitobject.duration<=0))) { //removes hit circle if time left is less than or equal to the lenience time, or the circle has already been clicked and it's time left is less than zero
 					hitobjects.remove(index);
 				}
 			}
@@ -114,10 +121,10 @@ public class RhythmState extends DefaultGameState{
 	public void mousePressed(int button, int x, int y) {
 		if (button == Input.MOUSE_LEFT_BUTTON) {
 			for (HitObject hitobject:hitobjects) {
-				if ((!hitobject.clicked)&&((new Vector2f(x, y).distance(new Vector2f(hitobject.x, hitobject.y))) < hitobject.radius)) { //checks if current circle has already been clicked, then checks if click is within the circle
-					hitobjects.set(hitobjects.indexOf(hitobject), new HitObject(hitobject.x, hitobject.y, hitobject.radius, hitobject.duration, true));
-					points++;
-					break;
+				if ((!hitobject.clicked)&&((new Vector2f(x, y).distance(new Vector2f(hitobject.x, hitobject.y))) < innerRadius)) { //checks if current circle has already been clicked, then checks if click is within the circle
+					hitobjects.set(hitobjects.indexOf(hitobject), new HitObject(hitobject.x, hitobject.y, hitobject.radius, hitobject.duration, true)); //changes hitobject click state
+					points++; //increments points
+					break; //breaks out of for loop so that only one hit object is clicked at once
 				}
 			}
 		}

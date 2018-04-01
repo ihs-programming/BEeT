@@ -1,8 +1,16 @@
 package game;
 
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -71,9 +79,31 @@ public class RhythmState extends DefaultGameState {
 		beatmap = BeatmapParser.parseOsuBeatmaps(
 				Paths.get(beatmaporigin, beatmapzipfilename).toString())[3];
 		try {
-			MusicDecoder.convertAllAudioToWav(
-					BeatmapParser.DEFAULT_BEATMAP_FOLDER + beatmapzipfilename);
+			String extractedSongFilename = Paths
+					.get(BeatmapParser.DEFAULT_BEATMAP_FOLDER, beatmapzipfilename)
+					.toString();
+			MusicDecoder.convertAllAudioToWav(extractedSongFilename);
+			Clip clip = AudioSystem.getClip();
+
+			// load audio from file into stream
+			AudioInputStream audioStream = AudioSystem.getAudioInputStream(
+					Paths.get(extractedSongFilename, "audio.wav").toFile());
+			clip.open(audioStream);
+
+			// adjust volume
+			FloatControl gainControl = (FloatControl) clip
+					.getControl(FloatControl.Type.MASTER_GAIN);
+			gainControl.setValue(-25f);
+			clip.start();
 		} catch (JavaLayerException e) {
+			e.printStackTrace();
+		} catch (LineUnavailableException e) {
+			e.printStackTrace();
+		} catch (UnsupportedAudioFileException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

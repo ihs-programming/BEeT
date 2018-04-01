@@ -94,15 +94,10 @@ public class RhythmState extends DefaultGameState {
 													// the last in the list
 				g.setLineWidth(5f);
 				g.setColor(Color.white);
+
+				// draws a line in between consecutive hit objects
 				g.draw(new Line(new Vector2f(hitobject.x, hitobject.y), new Vector2f(
-						hitobjects.get(index + 1).x, hitobjects.get(index + 1).y))); // draws
-																						// a
-																						// line
-																						// in
-																						// between
-																						// consecutive
-																						// hit
-																						// objects
+						hitobjects.get(index + 1).x, hitobjects.get(index + 1).y)));
 			}
 			if (hitobject.clicked) { // changes color based on the state of the circle
 				g.setColor(Color.green);
@@ -110,9 +105,9 @@ public class RhythmState extends DefaultGameState {
 				g.setColor(Color.white);
 			}
 			g.setLineWidth(2f);
-			g.draw(new Circle(hitobject.x, hitobject.y, hitobject.radius + innerRadius)); // draws
-																							// approach
-																							// circle
+
+			// draws approach circle
+			g.draw(new Circle(hitobject.x, hitobject.y, hitobject.radius + innerRadius));
 			g.fill(new Circle(hitobject.x, hitobject.y, innerRadius)); // draws hit circle
 		}
 
@@ -138,17 +133,9 @@ public class RhythmState extends DefaultGameState {
 		percentcompletion = (float) Math.floor(10000 * songtime / beatmap.getLast().time)
 				/ 100;
 
+		// puts objects in the beatmap into the hitobjects list when needed
 		if (beatmapindex <= beatmap.size() - 1
-				&& beatmap.get(beatmapindex).time <= CIRCLE_TIME + songtime) { // puts
-																				// objects
-																				// in the
-																				// beatmap
-																				// into
-																				// the
-																				// hitobjects
-																				// list
-																				// when
-																				// needed
+				&& beatmap.get(beatmapindex).time <= CIRCLE_TIME + songtime) {
 			Beat currentbeat = beatmap.get(beatmapindex);
 			HitObject hitobject = new HitObject(currentbeat.x, currentbeat.y, maxRadius,
 					CIRCLE_TIME, false);
@@ -159,36 +146,17 @@ public class RhythmState extends DefaultGameState {
 		if (!hitobjects.isEmpty()) {
 			for (HitObject hitobject : hitobjects) {
 				int index = hitobjects.indexOf(hitobject);
+
+				// shrinks approach circle and reduces remaining time on screen
 				hitobjects.set(index,
 						new HitObject(hitobject.x, hitobject.y,
 								maxRadius * (hitobject.duration / CIRCLE_TIME),
-								hitobject.duration - delta, hitobject.clicked)); // shrinks
-																					// approach
-																					// circle
-																					// and
-																					// reduces
-																					// remaining
-																					// time
-																					// on
-																					// screen
+								hitobject.duration - delta, hitobject.clicked));
+				// removes hit circle if time left is less than or equal to the lenience
+				// time, or the circle has already been clicked and it's time left is less
+				// than zero
 				if (hitobject.duration <= -LENIENCE_TIME
-						|| hitobject.clicked && hitobject.duration <= 0) { // removes hit
-																			// circle if
-																			// time left
-																			// is less
-																			// than or
-																			// equal to
-																			// the
-																			// lenience
-																			// time, or
-																			// the circle
-																			// has already
-																			// been
-																			// clicked and
-																			// it's time
-																			// left is
-																			// less than
-																			// zero
+						|| hitobject.clicked && hitobject.duration <= 0) {
 					if (!hitobject.clicked) {
 						combo = 0;
 					}
@@ -210,31 +178,16 @@ public class RhythmState extends DefaultGameState {
 	public void click() {
 		int x = inp.getMouseX(), y = inp.getMouseY();
 		for (HitObject hitobject : hitobjects) {
+			// checks if current circle has already been clicked, then checks if click is
+			// within the circle
 			if (!hitobject.clicked && new Vector2f(x, y)
-					.distance(new Vector2f(hitobject.x, hitobject.y)) < innerRadius) { // checks
-																						// if
-																						// current
-																						// circle
-																						// has
-																						// already
-																						// been
-																						// clicked,
-																						// then
-																						// checks
-																						// if
-																						// click
-																						// is
-																						// within
-																						// the
-																						// circle
+					.distance(new Vector2f(hitobject.x, hitobject.y)) < innerRadius) {
+				// changes hitobject click state
 				hitobjects.set(hitobjects.indexOf(hitobject), new HitObject(hitobject.x,
-						hitobject.y, hitobject.radius, hitobject.duration, true)); // changes
-																					// hitobject
-																					// click
-																					// state
+						hitobject.y, hitobject.radius, hitobject.duration, true));
 				points++; // increments points
 				combo++; // increases combo
-				break; // breaks out of for loop so that only one hit object is clicked at
+				break; // breaks out of loop so that only one hit object is clicked at
 						// once
 			}
 		}

@@ -27,6 +27,11 @@ public class RhythmState extends DefaultGameState {
 	private float timescale = .08f; // rate at which approach circles shrink. doesn't
 									// change the time circles are on screen, however
 	private int points = 0; // total number of points
+	private int combo = 0; // current combo
+	private int hitobjectscompleted = 0; // number of passed hitobjects, includes both hit
+											// and missed
+	private float hitpercent = 0; // percentage of hitobjects hit
+	private float percentcompletion = 0; // percent of the song completed
 
 	private float maxRadius = CIRCLE_TIME * timescale; // maximum radius of the approach
 														// circles
@@ -60,7 +65,7 @@ public class RhythmState extends DefaultGameState {
 		String beatmapzipfilename = "725875 Sanshuu Chuugaku Yuushabu - Hoshi to Hana.osz";
 		String beatmaporigin = "res/sample_osu_beatmaps/";
 		beatmap = BeatmapParser.parseOsuBeatmaps(
-				Paths.get(beatmaporigin, beatmapzipfilename).toString())[0];
+				Paths.get(beatmaporigin, beatmapzipfilename).toString())[3];
 	}
 
 	@Override
@@ -102,17 +107,26 @@ public class RhythmState extends DefaultGameState {
 		}
 
 		g.setColor(Color.white);
-		g.drawString("Points: " + points, gc.getWidth() - 200, 50);
+		g.drawString("Points: " + points, 10, 30);
+		g.drawString("Current combo: " + combo,
+				10, 50);
 		g.drawString(
 				"Points per second "
 						+ 1000f * points / (System.currentTimeMillis() - starttime),
-				gc.getWidth() - 600, 70);
+				10, 70);
+		g.drawString("Percentage complete: " + percentcompletion + "%",
+				gc.getWidth() - 250, 30);
+		g.drawString("Hit rate: " + hitpercent + "%",
+				10, 90);
 	}
 
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int delta)
 			throws SlickException {
 		songtime += delta;
+
+		percentcompletion = (float) Math.floor(10000 * songtime / beatmap.getLast().time)
+				/ 100;
 
 		if (beatmapindex <= beatmap.size() - 1
 				&& beatmap.get(beatmapindex).time <= CIRCLE_TIME + songtime) { // puts
@@ -165,7 +179,13 @@ public class RhythmState extends DefaultGameState {
 																			// left is
 																			// less than
 																			// zero
+					if (!hitobject.clicked) {
+						combo = 0;
+					}
 					hitobjects.remove(index);
+					hitobjectscompleted++;
+					hitpercent = (float) (Math.floor(10000 * points / hitobjectscompleted)
+							/ 100);
 				}
 			}
 		}
@@ -203,6 +223,7 @@ public class RhythmState extends DefaultGameState {
 																					// click
 																					// state
 				points++; // increments points
+				combo++; // increases combo
 				break; // breaks out of for loop so that only one hit object is clicked at
 						// once
 			}

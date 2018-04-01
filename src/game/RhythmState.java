@@ -15,6 +15,9 @@ import org.newdawn.slick.geom.Line;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.StateBasedGame;
 
+import javazoom.jl.decoder.JavaLayerException;
+import utils.MusicDecoder;
+
 public class RhythmState extends DefaultGameState {
 
 	public final int[] CLICK_KEYS = { Input.KEY_Z, Input.KEY_X };
@@ -67,6 +70,12 @@ public class RhythmState extends DefaultGameState {
 		String beatmaporigin = "res/sample_osu_beatmaps/";
 		beatmap = BeatmapParser.parseOsuBeatmaps(
 				Paths.get(beatmaporigin, beatmapzipfilename).toString())[3];
+		try {
+			MusicDecoder.convertAllAudioToWav(
+					BeatmapParser.DEFAULT_BEATMAP_FOLDER + beatmapzipfilename);
+		} catch (JavaLayerException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

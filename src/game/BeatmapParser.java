@@ -16,7 +16,8 @@ public class BeatmapParser {
 	public static final String DEFAULT_BEATMAP_FOLDER = "res/beatmaps/";
 
 	/**
-	 * Parses an all of the beatmaps out of an osz file
+	 * Parses all of the beatmaps out of an osz file into a linkedlist array where 0
+	 * is easy, 1 is medium, 2 is hard, and 3 is insane
 	 *
 	 * @param oszfilename
 	 * @return

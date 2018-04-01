@@ -49,6 +49,7 @@ public class RhythmState extends DefaultGameState {
 	@Override
 	public void enter(GameContainer gc, StateBasedGame arg1) throws SlickException {
 		inp = gc.getInput();
+		gc.setMouseCursor("res/cursor.png", 80, 80);
 	}
 
 	@Override

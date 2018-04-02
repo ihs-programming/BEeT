@@ -57,20 +57,14 @@ public class RhythmState extends DefaultGameState {
 
 	private Input inp; // Get various information about input (e.g. mouse position)
 
+	public RhythmState(int id) {
+		super(id);
+	}
+
 	@Override
 	public void enter(GameContainer gc, StateBasedGame arg1) throws SlickException {
 		inp = gc.getInput();
 		gc.setMouseCursor("res/cursor.png", 80, 80);
-	}
-
-	@Override
-	public int getID() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void init(GameContainer gc, StateBasedGame arg1) throws SlickException {
 		background = new Image("res/background.jpg");
 		background = background.getScaledCopy(gc.getWidth(), gc.getHeight());
 
@@ -95,17 +89,14 @@ public class RhythmState extends DefaultGameState {
 					.getControl(FloatControl.Type.MASTER_GAIN);
 			gainControl.setValue(-25f);
 			clip.start();
-		} catch (JavaLayerException e) {
-			e.printStackTrace();
-		} catch (LineUnavailableException e) {
-			e.printStackTrace();
-		} catch (UnsupportedAudioFileException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (JavaLayerException | LineUnavailableException
+				| UnsupportedAudioFileException | IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void init(GameContainer gc, StateBasedGame arg1) throws SlickException {
 	}
 
 	@Override
@@ -117,9 +108,9 @@ public class RhythmState extends DefaultGameState {
 			throws SlickException {
 		g.drawImage(background, 0, 0);
 
-		for (HitObject hitobject : hitobjects) { // this for loop draws all the hit
-													// objects
-			int index = hitobjects.indexOf(hitobject);
+		// this for loop draws all the hit objects
+		for (int index = 0; index < hitobjects.size(); index++) {
+			HitObject hitobject = hitobjects.get(index);
 			if (index != hitobjects.size() - 1) { // check to make sure hitobject is not
 													// the last in the list
 				g.setLineWidth(5f);
@@ -143,11 +134,9 @@ public class RhythmState extends DefaultGameState {
 
 		g.setColor(Color.white);
 		g.drawString("Points: " + points, 10, 30);
-		g.drawString("Current combo: " + combo,
-				10, 50);
-		g.drawString(
-				"Points per second "
-						+ 1000f * points / (System.currentTimeMillis() - starttime),
+		g.drawString("Current combo: " + combo, 10, 50);
+		g.drawString("Points per second "
+				+ 1000f * points / (System.currentTimeMillis() - starttime),
 				10, 70);
 		g.drawString("Percentage complete: " + percentcompletion + "%",
 				gc.getWidth() - 250, 30);
@@ -182,6 +171,7 @@ public class RhythmState extends DefaultGameState {
 						new HitObject(hitobject.x, hitobject.y,
 								maxRadius * (hitobject.duration / CIRCLE_TIME),
 								hitobject.duration - delta, hitobject.clicked));
+
 				// removes hit circle if time left is less than or equal to the lenience
 				// time, or the circle has already been clicked and it's time left is less
 				// than zero

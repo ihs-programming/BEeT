@@ -137,22 +137,25 @@ public class RhythmState extends DefaultGameState {
 																					// real
 																					// display
 																					// position
-				g.draw(new Line(new Vector2f(currentcirclepos.x, currentcirclepos.y),
-						new Vector2f(
-								nextcirclepos.x, nextcirclepos.y)));
+				g.setColor(new Color(255, 255, 255, 120));
+				g.draw(new Line(currentcirclepos, nextcirclepos));
 			}
 			if (hitobject.clicked) { // changes color based on the state of the circle
-				g.setColor(Color.green);
+				g.setColor(Color.transparent);
 			} else {
 				g.setColor(Color.white);
+				g.fill(new Circle(currentcirclepos.x, currentcirclepos.y,
+						innerRadius)); // Draw border
+				g.setColor(hitobject.color);
 			}
 			g.setLineWidth(2f);
 
 			// draws approach circle
 			g.draw(new Circle(currentcirclepos.x, currentcirclepos.y,
+
 					(hitobject.radius + innerRadius) * scalefactor));
 			g.fill(new Circle(currentcirclepos.x, currentcirclepos.y,
-					innerRadius * scalefactor)); // draws
+					(innerRadius - HitObject.BORDER_WIDTH) * scalefactor)); // draws
 			// hit
 			// circle
 		}
@@ -187,29 +190,27 @@ public class RhythmState extends DefaultGameState {
 			beatmapindex++;
 		}
 
-		if (!hitobjects.isEmpty()) {
-			for (HitObject hitobject : hitobjects) {
-				int index = hitobjects.indexOf(hitobject);
+		for (HitObject hitobject : hitobjects) {
+			int index = hitobjects.indexOf(hitobject);
 
-				// shrinks approach circle and reduces remaining time on screen
-				hitobjects.set(index,
-						new HitObject(hitobject.x, hitobject.y,
-								maxRadius * (hitobject.duration / CIRCLE_TIME),
-								hitobject.duration - delta, hitobject.clicked));
+			// shrinks approach circle and reduces remaining time on screen
+			hitobjects.set(index,
+					new HitObject(hitobject.x, hitobject.y,
+							maxRadius * (hitobject.duration / CIRCLE_TIME),
+							hitobject.duration - delta, hitobject.clicked));
 
-				// removes hit circle if time left is less than or equal to the lenience
-				// time, or the circle has already been clicked and it's time left is less
-				// than zero
-				if (hitobject.duration <= -LENIENCE_TIME
-						|| hitobject.clicked && hitobject.duration <= 0) {
-					if (!hitobject.clicked) {
-						combo = 0;
-					}
-					hitobjects.remove(index);
-					hitobjectscompleted++;
-					hitpercent = (float) (Math.floor(10000 * points / hitobjectscompleted)
-							/ 100);
+			// removes hit circle if time left is less than or equal to the lenience
+			// time, or the circle has already been clicked and it's time left is less
+			// than zero
+			if (hitobject.duration <= -LENIENCE_TIME
+					|| hitobject.clicked && hitobject.duration <= 0) {
+				if (!hitobject.clicked) {
+					combo = 0;
 				}
+				hitobjects.remove(index);
+				hitobjectscompleted++;
+				hitpercent = (float) (Math.floor(10000 * points / hitobjectscompleted)
+						/ 100);
 			}
 		}
 

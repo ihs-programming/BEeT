@@ -85,6 +85,7 @@ public class RhythmState extends DefaultGameState {
 			// load audio from file into stream
 			AudioInputStream audioStream = AudioSystem.getAudioInputStream(
 					Paths.get(extractedSongFilename, "audio.wav").toFile());
+			songtime = System.currentTimeMillis();
 			clip.open(audioStream);
 
 			// adjust volume
@@ -92,6 +93,7 @@ public class RhythmState extends DefaultGameState {
 					.getControl(FloatControl.Type.MASTER_GAIN);
 			gainControl.setValue(-25f);
 			clip.start();
+			songtime = songtime - System.currentTimeMillis();
 		} catch (JavaLayerException | LineUnavailableException
 				| UnsupportedAudioFileException | IOException e) {
 			e.printStackTrace();
@@ -115,6 +117,7 @@ public class RhythmState extends DefaultGameState {
 
 		// this for loop draws all the hit objects
 		OsuPixels osupixelconverter = new OsuPixels();
+		float scalefactor = osupixelconverter.getScaleFactor(gc);
 		for (int index = 0; index < hitobjects.size(); index++) {
 			HitObject hitobject = hitobjects.get(index);
 			Vector2f currentcirclepos = osupixelconverter.osuPixeltoXY(gc,
@@ -147,10 +150,11 @@ public class RhythmState extends DefaultGameState {
 
 			// draws approach circle
 			g.draw(new Circle(currentcirclepos.x, currentcirclepos.y,
-					hitobject.radius + innerRadius));
-			g.fill(new Circle(currentcirclepos.x, currentcirclepos.y, innerRadius)); // draws
-																						// hit
-																						// circle
+					(hitobject.radius + innerRadius) * scalefactor));
+			g.fill(new Circle(currentcirclepos.x, currentcirclepos.y,
+					innerRadius * scalefactor)); // draws
+			// hit
+			// circle
 		}
 
 		g.setColor(Color.white);
@@ -219,12 +223,14 @@ public class RhythmState extends DefaultGameState {
 	public void click() {
 		int x = inp.getMouseX(), y = inp.getMouseY();
 		OsuPixels xytoosupixels = new OsuPixels();
+		float scalefactor = xytoosupixels.getScaleFactor(gamecontainer);
 		for (HitObject hitobject : hitobjects) {
 			// checks if current circle has already been clicked, then checks if click is
 			// within the circle
 			if (!hitobject.clicked && new Vector2f(x, y)
 					.distance(xytoosupixels.osuPixeltoXY(gamecontainer,
-							new Vector2f(hitobject.x, hitobject.y))) < innerRadius) {
+							new Vector2f(hitobject.x, hitobject.y))) < innerRadius
+									* scalefactor) {
 				// changes hitobject click state
 				hitobjects.set(hitobjects.indexOf(hitobject), new HitObject(hitobject.x,
 						hitobject.y, hitobject.radius, hitobject.duration, true));

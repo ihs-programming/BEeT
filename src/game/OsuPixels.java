@@ -12,12 +12,11 @@ public class OsuPixels {
 	 * @return
 	 */
 	protected Vector2f osuPixeltoXY(GameContainer gc, Vector2f osupixels) {
-		int screenheight = gc.getHeight();
 		float newx = osupixels.x;
 		float newy = osupixels.y;
 		newx += 64;
 		newy += 48;
-		float scalefactor = screenheight / 480f;
+		float scalefactor = getScaleFactor(gc);
 		newx = newx * scalefactor;
 		newy = newy * scalefactor;
 		Vector2f convertedvector = new Vector2f(newx, newy);
@@ -32,9 +31,7 @@ public class OsuPixels {
 	 * @return
 	 */
 	protected Vector2f XYtoOsuPixel(GameContainer gc, Vector2f XYpixels) {
-		int screenheight = gc.getHeight();
-		float scalefactor = 1;
-		scalefactor = screenheight / 480f;
+		float scalefactor = getScaleFactor(gc);
 		float newx = XYpixels.x;
 		float newy = XYpixels.y;
 		newx = newx / scalefactor;
@@ -44,5 +41,11 @@ public class OsuPixels {
 		Vector2f convertedvector = new Vector2f(newx, newy);
 		// System.out.println(newx + " " + newy);
 		return convertedvector;
+	}
+
+	protected float getScaleFactor(GameContainer gc) {
+		int screenheight = gc.getHeight();
+		float scalefactor = screenheight / 480f;
+		return scalefactor;
 	}
 }

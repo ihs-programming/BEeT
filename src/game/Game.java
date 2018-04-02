@@ -14,9 +14,7 @@ public class Game extends StateBasedGame {
 	public void initStatesList(GameContainer gc) throws SlickException {
 		for (GameStateTypes gst : GameStateTypes.values()) {
 			addState(gst.createInstance());
-			System.out.println(getCurrentStateID());
 		}
-		enterState(GameStateTypes.SONG_SELECT.getID());
 	}
 
 }

@@ -12,8 +12,9 @@ public enum GameStateTypes {
 	 * Note that the first state listed is the state that the game starts in
 	 */
 	// @formatter:off
+	RHYTHM_GAME(2, RhythmState.class),
 	SONG_SELECT(1, SongSelectState.class),
-	RHYTHM_GAME(2, RhythmState.class);
+	;
 	// @formatter:on
 
 	private int id;

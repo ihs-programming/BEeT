@@ -85,7 +85,6 @@ public class RhythmState extends DefaultGameState {
 			// load audio from file into stream
 			AudioInputStream audioStream = AudioSystem.getAudioInputStream(
 					Paths.get(extractedSongFilename, "audio.wav").toFile());
-			songtime = System.currentTimeMillis();
 			clip.open(audioStream);
 
 			// adjust volume
@@ -93,7 +92,7 @@ public class RhythmState extends DefaultGameState {
 					.getControl(FloatControl.Type.MASTER_GAIN);
 			gainControl.setValue(-25f);
 			clip.start();
-			songtime = songtime - System.currentTimeMillis();
+			songtime = 0;
 		} catch (JavaLayerException | LineUnavailableException
 				| UnsupportedAudioFileException | IOException e) {
 			e.printStackTrace();

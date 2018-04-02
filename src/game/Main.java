@@ -25,6 +25,7 @@ public class Main {
 			app.setTargetFrameRate(refreshRate);
 			app.setIcons(new String[] { "res/icons/iconsmall.png",
 					"res/icons/iconlarge.png" });
+			app.setDisplayMode(640, 480, false);
 			app.start();
 		} catch (SlickException e) {
 

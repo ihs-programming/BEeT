@@ -57,12 +57,15 @@ public class RhythmState extends DefaultGameState {
 
 	private Input inp; // Get various information about input (e.g. mouse position)
 
+	private GameContainer gamecontainer;
+
 	public RhythmState(int id) {
 		super(id);
 	}
 
 	@Override
 	public void enter(GameContainer gc, StateBasedGame arg1) throws SlickException {
+		gamecontainer = gc;
 		inp = gc.getInput();
 		gc.setMouseCursor("res/cursor.png", 80, 80);
 		background = new Image("res/background.jpg");
@@ -108,17 +111,32 @@ public class RhythmState extends DefaultGameState {
 			throws SlickException {
 		g.drawImage(background, 0, 0);
 
+		gamecontainer = gc; // updates game container
+
 		// this for loop draws all the hit objects
+		OsuPixels osupixelconverter = new OsuPixels();
 		for (int index = 0; index < hitobjects.size(); index++) {
 			HitObject hitobject = hitobjects.get(index);
+			Vector2f currentcirclepos = osupixelconverter.osuPixeltoXY(gc,
+					new Vector2f(hitobject.x, hitobject.y)); // converts from osupixels to
+																// real display position
 			if (index != hitobjects.size() - 1) { // check to make sure hitobject is not
 													// the last in the list
 				g.setLineWidth(5f);
 				g.setColor(Color.white);
 
 				// draws a line in between consecutive hit objects
-				g.draw(new Line(new Vector2f(hitobject.x, hitobject.y), new Vector2f(
-						hitobjects.get(index + 1).x, hitobjects.get(index + 1).y)));
+				Vector2f nextcirclepos = osupixelconverter.osuPixeltoXY(gc, new Vector2f(
+						hitobjects.get(index + 1).x, hitobjects.get(index + 1).y)); // converts
+																					// from
+																					// osupixels
+																					// to
+																					// real
+																					// display
+																					// position
+				g.draw(new Line(new Vector2f(currentcirclepos.x, currentcirclepos.y),
+						new Vector2f(
+								nextcirclepos.x, nextcirclepos.y)));
 			}
 			if (hitobject.clicked) { // changes color based on the state of the circle
 				g.setColor(Color.green);
@@ -128,8 +146,11 @@ public class RhythmState extends DefaultGameState {
 			g.setLineWidth(2f);
 
 			// draws approach circle
-			g.draw(new Circle(hitobject.x, hitobject.y, hitobject.radius + innerRadius));
-			g.fill(new Circle(hitobject.x, hitobject.y, innerRadius)); // draws hit circle
+			g.draw(new Circle(currentcirclepos.x, currentcirclepos.y,
+					hitobject.radius + innerRadius));
+			g.fill(new Circle(currentcirclepos.x, currentcirclepos.y, innerRadius)); // draws
+																						// hit
+																						// circle
 		}
 
 		g.setColor(Color.white);
@@ -197,11 +218,13 @@ public class RhythmState extends DefaultGameState {
 
 	public void click() {
 		int x = inp.getMouseX(), y = inp.getMouseY();
+		OsuPixels xytoosupixels = new OsuPixels();
 		for (HitObject hitobject : hitobjects) {
 			// checks if current circle has already been clicked, then checks if click is
 			// within the circle
 			if (!hitobject.clicked && new Vector2f(x, y)
-					.distance(new Vector2f(hitobject.x, hitobject.y)) < innerRadius) {
+					.distance(xytoosupixels.osuPixeltoXY(gamecontainer,
+							new Vector2f(hitobject.x, hitobject.y))) < innerRadius) {
 				// changes hitobject click state
 				hitobjects.set(hitobjects.indexOf(hitobject), new HitObject(hitobject.x,
 						hitobject.y, hitobject.radius, hitobject.duration, true));

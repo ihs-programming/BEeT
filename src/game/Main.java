@@ -11,21 +11,16 @@ public class Main {
 	public static final String GAME_NAME = "BeET";
 
 	public static void main(String[] args) {
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice[] gs = ge.getScreenDevices();
-		int refreshRate = 0;
-		for (GraphicsDevice element : gs) {
-			DisplayMode dm = element.getDisplayMode();
-			if (dm.getRefreshRate() > refreshRate) {
-				refreshRate = dm.getRefreshRate();
-			}
-		}
+		GraphicsDevice gs = GraphicsEnvironment.getLocalGraphicsEnvironment()
+				.getDefaultScreenDevice();
+		DisplayMode dm = gs.getDisplayMode();
+		int refreshRate = dm.getRefreshRate();
 		try {
 			AppGameContainer app = new AppGameContainer(new Game());
 			app.setTargetFrameRate(refreshRate);
 			app.setIcons(new String[] { "res/icons/iconsmall.png",
 					"res/icons/iconlarge.png" });
-			app.setDisplayMode(640, 480, false);
+			app.setDisplayMode(dm.getWidth() * 3 / 4, dm.getHeight() * 3 / 4, false);
 			app.start();
 		} catch (SlickException e) {
 

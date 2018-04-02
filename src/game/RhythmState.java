@@ -145,7 +145,7 @@ public class RhythmState extends DefaultGameState {
 			} else {
 				g.setColor(Color.white);
 				g.fill(new Circle(currentcirclepos.x, currentcirclepos.y,
-						innerRadius)); // Draw border
+						innerRadius * scalefactor)); // Draw border
 				g.setColor(hitobject.color);
 			}
 			g.setLineWidth(2f);

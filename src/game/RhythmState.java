@@ -57,9 +57,9 @@ public class RhythmState extends DefaultGameState {
 														// circles
 	private float innerRadius = 20f; // radius of the inner hit circles which you click
 
+	private Clip clip;
 	private long starttime = System.currentTimeMillis(); // initial time
 	private long songtime = 0; // time since beginning of the song, in ms
-	private boolean musicstarted = false;
 
 	private CopyOnWriteArrayList<HitObject> hitobjects = new CopyOnWriteArrayList<>();
 	private LinkedList<Beat> beatmap = new LinkedList<>();
@@ -104,8 +104,7 @@ public class RhythmState extends DefaultGameState {
 					.get(BeatmapParser.DEFAULT_BEATMAP_FOLDER, beatmapzipfilename)
 					.toString();
 			MusicDecoder.convertAllAudioToWav(extractedSongFilename);
-			Clip clip = AudioSystem.getClip();
-
+			clip = AudioSystem.getClip();
 			// load audio from file into stream
 			AudioInputStream audioStream = AudioSystem.getAudioInputStream(
 					Paths.get(extractedSongFilename, "audio.wav").toFile());
@@ -116,7 +115,6 @@ public class RhythmState extends DefaultGameState {
 					.getControl(FloatControl.Type.MASTER_GAIN);
 			gainControl.setValue(-25f);
 			clip.start();
-			musicstarted = true;
 		} catch (JavaLayerException | LineUnavailableException
 				| UnsupportedAudioFileException | IOException e) {
 			e.printStackTrace();
@@ -207,52 +205,49 @@ public class RhythmState extends DefaultGameState {
 	@Override
 	public void update(GameContainer gc, StateBasedGame sbg, int delta)
 			throws SlickException {
-		if (musicstarted) { // only update if the music has actually started
-			songtime += delta;
+		songtime = clip.getMicrosecondPosition() / 1000;
 
-			percentcompletion = (float) Math
-					.floor(10000 * songtime / beatmap.getLast().time)
-					/ 100;
+		percentcompletion = (float) Math
+				.floor(10000 * songtime / beatmap.getLast().time)
+				/ 100;
 
-			// puts objects in the beatmap into the hitobjects list when needed
-			if (beatmapindex <= beatmap.size() - 1
-					&& beatmap.get(beatmapindex).time <= CIRCLE_TIME + songtime) {
-				Beat currentbeat = beatmap.get(beatmapindex);
-				HitObject hitobject = new HitObject(currentbeat.x, currentbeat.y,
-						maxRadius,
-						CIRCLE_TIME, false);
-				hitobjects.add(hitobject);
-				beatmapindex++;
-			}
-
-			for (HitObject hitobject : hitobjects) {
-				int index = hitobjects.indexOf(hitobject);
-
-				// shrinks approach circle and reduces remaining time on screen
-				hitobjects.set(index,
-						new HitObject(hitobject.x, hitobject.y,
-								maxRadius * (hitobject.duration / CIRCLE_TIME),
-								hitobject.duration - delta, hitobject.clicked));
-
-				// removes hit circle if time left is less than or equal to the lenience
-				// time, or the circle has already been clicked and it's time left is less
-				// than zero
-				if (hitobject.duration <= -LENIENCE_TIME
-						|| hitobject.clicked && hitobject.duration <= 0) {
-					if (!hitobject.clicked) {
-						combo = 0;
-					}
-					hitobjects.remove(index);
-					hitobjectscompleted++;
-					hitpercent = (float) (Math.floor(10000 * points / hitobjectscompleted)
-							/ 100);
-					perfectionpercent = (float) (Math
-							.floor(10000 * perfection / hitobjectscompleted)
-							/ 100);
-				}
-			}
+		// puts objects in the beatmap into the hitobjects list when needed
+		if (beatmapindex <= beatmap.size() - 1
+				&& beatmap.get(beatmapindex).time <= CIRCLE_TIME + songtime) {
+			Beat currentbeat = beatmap.get(beatmapindex);
+			HitObject hitobject = new HitObject(currentbeat.x, currentbeat.y,
+					maxRadius,
+					CIRCLE_TIME, false);
+			hitobjects.add(hitobject);
+			beatmapindex++;
 		}
 
+		for (HitObject hitobject : hitobjects) {
+			int index = hitobjects.indexOf(hitobject);
+
+			// shrinks approach circle and reduces remaining time on screen
+			hitobjects.set(index,
+					new HitObject(hitobject.x, hitobject.y,
+							maxRadius * (hitobject.duration / CIRCLE_TIME),
+							hitobject.duration - delta, hitobject.clicked));
+
+			// removes hit circle if time left is less than or equal to the lenience
+			// time, or the circle has already been clicked and it's time left is less
+			// than zero
+			if (hitobject.duration <= -LENIENCE_TIME
+					|| hitobject.clicked && hitobject.duration <= 0) {
+				if (!hitobject.clicked) {
+					combo = 0;
+				}
+				hitobjects.remove(index);
+				hitobjectscompleted++;
+				hitpercent = (float) (Math.floor(10000 * points / hitobjectscompleted)
+						/ 100);
+				perfectionpercent = (float) (Math
+						.floor(10000 * perfection / hitobjectscompleted)
+						/ 100);
+			}
+		}
 	}
 
 	@Override

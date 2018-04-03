@@ -11,14 +11,20 @@ public class OsuPixels {
 	 * @param osupixels
 	 * @return
 	 */
-	protected Vector2f osuPixeltoXY(GameContainer gc, Vector2f osupixels) {
+	public Vector2f osuPixeltoXY(GameContainer gc, Vector2f osupixels) {
 		float newx = osupixels.x;
 		float newy = osupixels.y;
-		newx += 64;
-		newy += 48;
+		// add padding on the sides
+		newx += 64 / 2;
+		newy += 48 / 2;
 		float scalefactor = getScaleFactor(gc);
 		newx = newx * scalefactor;
 		newy = newy * scalefactor;
+		if ((double) gc.getWidth() / gc.getHeight() >= 640.0 / 480.0) {
+			newx += (gc.getWidth() - scalefactor * gc.getHeight()) / 2;
+		} else {
+			newy += (gc.getHeight() - gc.getWidth() / scalefactor) / 2;
+		}
 		Vector2f convertedvector = new Vector2f(newx, newy);
 		return convertedvector;
 	}
@@ -30,22 +36,33 @@ public class OsuPixels {
 	 * @param XYpixels
 	 * @return
 	 */
-	protected Vector2f XYtoOsuPixel(GameContainer gc, Vector2f XYpixels) {
-		float scalefactor = getScaleFactor(gc);
+	public Vector2f XYtoOsuPixel(GameContainer gc, Vector2f XYpixels) {
+		float scalefactor = 1 / getScaleFactor(gc);
+		System.out.println(scalefactor + "of y");
 		float newx = XYpixels.x;
 		float newy = XYpixels.y;
-		newx = newx / scalefactor;
-		newy = newx / scalefactor;
-		newx -= 64;
-		newy -= 48;
+		if ((double) gc.getWidth() / gc.getHeight() >= 640.0 / 480.0) {
+			newx -= (gc.getWidth() - scalefactor * gc.getHeight()) / 2;
+		} else {
+			newy -= (gc.getHeight() - gc.getWidth() / scalefactor) / 2;
+		}
+		newx = newx * scalefactor;
+		newy = newy * scalefactor;
+		newx -= 64 / 2;
+		newy -= 48 / 2;
 		Vector2f convertedvector = new Vector2f(newx, newy);
-		// System.out.println(newx + " " + newy);
 		return convertedvector;
 	}
 
 	protected float getScaleFactor(GameContainer gc) {
 		int screenheight = gc.getHeight();
-		float scalefactor = screenheight / 480f;
+		int screenwidth = gc.getWidth();
+		float scalefactor;
+		if ((double) screenwidth / screenheight >= 640.0 / 480.0) {
+			scalefactor = screenheight / 480f;
+		} else {
+			scalefactor = screenwidth / 640f;
+		}
 		return scalefactor;
 	}
 }

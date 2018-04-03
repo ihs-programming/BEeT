@@ -222,13 +222,13 @@ public class RhythmState extends DefaultGameState {
 
 	public void click() {
 		int x = inp.getMouseX(), y = inp.getMouseY();
-		OsuPixels xytoosupixels = new OsuPixels();
-		float scalefactor = xytoosupixels.getScaleFactor(gamecontainer);
+		OsuPixels osupixelstoxy = new OsuPixels();
+		float scalefactor = osupixelstoxy.getScaleFactor(gamecontainer);
 		for (HitObject hitobject : hitobjects) {
 			// checks if current circle has already been clicked, then checks if click is
 			// within the circle
 			if (!hitobject.clicked && new Vector2f(x, y)
-					.distance(xytoosupixels.osuPixeltoXY(gamecontainer,
+					.distance(osupixelstoxy.osuPixeltoXY(gamecontainer,
 							new Vector2f(hitobject.x, hitobject.y))) < innerRadius
 									* scalefactor) {
 				// changes hitobject click state

@@ -42,12 +42,14 @@ public class BeatmapParser {
 	 * @param beatmapfilepath
 	 */
 	private static void extractOsuZip(String beatmapfilepath, String beatmapFolder) {
-		UnzipUtility beatmapunzipper = new UnzipUtility();
-		try {
-			beatmapunzipper.unzip(beatmapfilepath, beatmapFolder);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (!new File(beatmapFolder).exists()) {
+			UnzipUtility beatmapunzipper = new UnzipUtility();
+			try {
+				beatmapunzipper.unzip(beatmapfilepath, beatmapFolder);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 

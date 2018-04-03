@@ -14,18 +14,20 @@ public class OsuPixels {
 	public Vector2f osuPixeltoXY(GameContainer gc, Vector2f osupixels) {
 		float newx = osupixels.x;
 		float newy = osupixels.y;
-		// add padding on the sides
-		newx += 64 / 2;
-		newy += 48 / 2;
 		float scalefactor = getScaleFactor(gc);
-		newx = newx * scalefactor;
-		newy = newy * scalefactor;
+		// add padding on the sides
+		newx += 64.0;
+		newy += 48.0;
+		Vector2f convertedvector = new Vector2f(newx * scalefactor, newy * scalefactor);
 		if ((double) gc.getWidth() / gc.getHeight() >= 640.0 / 480.0) {
-			newx += (gc.getWidth() - scalefactor * gc.getHeight()) / 2;
+			convertedvector = new Vector2f(
+					convertedvector.x + (gc.getWidth() - 640 * scalefactor) / 2,
+					convertedvector.y);
 		} else {
-			newy += (gc.getHeight() - gc.getWidth() / scalefactor) / 2;
+			convertedvector = new Vector2f(
+					convertedvector.x,
+					convertedvector.y + (gc.getHeight() - 480 * scalefactor) / 2);
 		}
-		Vector2f convertedvector = new Vector2f(newx, newy);
 		return convertedvector;
 	}
 
@@ -36,22 +38,25 @@ public class OsuPixels {
 	 * @param XYpixels
 	 * @return
 	 */
-	public Vector2f XYtoOsuPixel(GameContainer gc, Vector2f XYpixels) {
-		float scalefactor = 1 / getScaleFactor(gc);
-		System.out.println(scalefactor + "of y");
-		float newx = XYpixels.x;
-		float newy = XYpixels.y;
+	public Vector2f XYtoOsuPixel(GameContainer gc, Vector2f convertedvector) {
+		float scalefactor = (float) (1.0 / getScaleFactor(gc));
 		if ((double) gc.getWidth() / gc.getHeight() >= 640.0 / 480.0) {
-			newx -= (gc.getWidth() - scalefactor * gc.getHeight()) / 2;
+			convertedvector = new Vector2f(
+					convertedvector.x - (gc.getWidth() - 640 / scalefactor) / 2,
+					convertedvector.y);
 		} else {
-			newy -= (gc.getHeight() - gc.getWidth() / scalefactor) / 2;
+			convertedvector = new Vector2f(
+					convertedvector.x,
+					convertedvector.y - (gc.getHeight() - 480 / scalefactor) / 2);
 		}
-		newx = newx * scalefactor;
-		newy = newy * scalefactor;
-		newx -= 64 / 2;
-		newy -= 48 / 2;
-		Vector2f convertedvector = new Vector2f(newx, newy);
-		return convertedvector;
+		float newx = convertedvector.x * scalefactor;
+		float newy = convertedvector.y * scalefactor;
+
+		// add padding on the sides
+		newx -= 64.0;
+		newy -= 48.0;
+		Vector2f vector = new Vector2f(newx, newy);
+		return vector;
 	}
 
 	protected float getScaleFactor(GameContainer gc) {

@@ -267,8 +267,8 @@ public class RhythmState extends DefaultGameState {
 				if (Math.abs(hitobject.duration) <= LENIENCE_TIME) {
 					points++; // increments points
 					perfection += 1.0 - Math.abs(hitobject.duration) / LENIENCE_TIME;
+					combo++; // increases combo
 				}
-				combo++; // increases combo
 				break; // breaks out of loop so that only one hit object is clicked at
 						// once
 			}

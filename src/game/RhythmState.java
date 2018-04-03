@@ -20,6 +20,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Line;
+import org.newdawn.slick.geom.Rectangle;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -35,6 +36,9 @@ public class RhythmState extends DefaultGameState {
 												// click the hit object
 
 	private Image background; // background image
+	private int overlayopacity = 120; // opacity of the overlay which covers the
+										// background image
+
 	private float timescale = .08f; // rate at which approach circles shrink. doesn't
 									// change the time circles are on screen, however
 	private int points = 0; // total number of points
@@ -117,6 +121,10 @@ public class RhythmState extends DefaultGameState {
 		g.drawImage(background, 0, 0);
 
 		gamecontainer = gc; // updates game container
+
+		// draw a transparent black rectangle over the background image
+		g.setColor(new Color(0, 0, 0, overlayopacity));
+		g.fill(new Rectangle(0, 0, gc.getWidth(), gc.getHeight()));
 
 		// this for loop draws all the hit objects
 		OsuPixels osupixelconverter = new OsuPixels();

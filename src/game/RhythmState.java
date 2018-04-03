@@ -12,6 +12,9 @@ import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import org.lwjgl.BufferUtils;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Cursor;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -76,10 +79,17 @@ public class RhythmState extends DefaultGameState {
 	public void enter(GameContainer gc, StateBasedGame arg1) throws SlickException {
 		gamecontainer = gc;
 		inp = gc.getInput();
-		gc.setMouseGrabbed(true);
+
 		cursor = new Image("res/cursor.png");
 		cursorcenter = new Vector2f(cursor.getWidth() / 2, cursor.getHeight() / 2);
-
+		Cursor emptyCursor;
+		try {
+			emptyCursor = new Cursor(1, 1, 0, 0, 1, BufferUtils.createIntBuffer(1), null);
+			gc.setMouseCursor(emptyCursor, 0, 0);
+		} catch (LWJGLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		String beatmapzipfilename = "725875 Sanshuu Chuugaku Yuushabu - Hoshi to Hana.osz";
 		String beatmaporigin = "res/sample_osu_beatmaps/";
 

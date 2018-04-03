@@ -22,7 +22,9 @@ public class MusicDecoder {
 				convertAllAudioToWav(file.getAbsolutePath());
 			} else if (getExtension(file.getName()).equals(".mp3")) {
 				String newFilename = changeFileExtension(file.getAbsolutePath(), ".wav");
-				convertAudioType(file.getAbsolutePath(), newFilename);
+				if (!new File(newFilename).exists()) {
+					convertAudioType(file.getAbsolutePath(), newFilename);
+				}
 			}
 		}
 	}

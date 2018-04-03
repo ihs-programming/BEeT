@@ -63,6 +63,8 @@ public class RhythmState extends DefaultGameState {
 	private int beatmapindex = 0;
 
 	private Input inp; // Get various information about input (e.g. mouse position)
+	private Image cursor;
+	private Vector2f cursorcenter;
 
 	private GameContainer gamecontainer;
 
@@ -74,7 +76,9 @@ public class RhythmState extends DefaultGameState {
 	public void enter(GameContainer gc, StateBasedGame arg1) throws SlickException {
 		gamecontainer = gc;
 		inp = gc.getInput();
-		gc.setMouseCursor("res/cursor.png", 80, 80);
+		gc.setMouseGrabbed(true);
+		cursor = new Image("res/cursor.png");
+		cursorcenter = new Vector2f(cursor.getWidth() / 2, cursor.getHeight() / 2);
 
 		String beatmapzipfilename = "725875 Sanshuu Chuugaku Yuushabu - Hoshi to Hana.osz";
 		String beatmaporigin = "res/sample_osu_beatmaps/";
@@ -185,6 +189,9 @@ public class RhythmState extends DefaultGameState {
 				10, 90);
 		g.drawString("Perfection: " + perfectionpercent + "%",
 				10, 110);
+
+		g.drawImage(cursor, inp.getMouseX() - cursorcenter.x,
+				inp.getMouseY() - cursorcenter.y);
 	}
 
 	@Override

@@ -216,8 +216,7 @@ public class RhythmState extends DefaultGameState {
 				&& beatmap.get(beatmapindex).time <= CIRCLE_TIME + songtime) {
 			Beat currentbeat = beatmap.get(beatmapindex);
 			HitObject hitobject = new HitObject(currentbeat.x, currentbeat.y,
-					maxRadius,
-					CIRCLE_TIME, false);
+					maxRadius, beatmap.get(beatmapindex).time - songtime, false);
 			hitobjects.add(hitobject);
 			beatmapindex++;
 		}

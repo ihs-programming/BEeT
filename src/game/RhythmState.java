@@ -42,10 +42,12 @@ public class RhythmState extends DefaultGameState {
 	private float timescale = .08f; // rate at which approach circles shrink. doesn't
 									// change the time circles are on screen, however
 	private int points = 0; // total number of points
+	private float perfection = 0; // perfection points
 	private int combo = 0; // current combo
 	private int hitobjectscompleted = 0; // number of passed hitobjects, includes both hit
 											// and missed
 	private float hitpercent = 0; // percentage of hitobjects hit
+	private float perfectionpercent = 0; // perfection point percentage
 	private float percentcompletion = 0; // percent of the song completed
 
 	private float maxRadius = CIRCLE_TIME * timescale; // maximum radius of the approach
@@ -181,6 +183,8 @@ public class RhythmState extends DefaultGameState {
 				gc.getWidth() - 250, 30);
 		g.drawString("Hit rate: " + hitpercent + "%",
 				10, 90);
+		g.drawString("Perfection: " + perfectionpercent + "%",
+				10, 110);
 	}
 
 	@Override
@@ -225,6 +229,9 @@ public class RhythmState extends DefaultGameState {
 					hitobjectscompleted++;
 					hitpercent = (float) (Math.floor(10000 * points / hitobjectscompleted)
 							/ 100);
+					perfectionpercent = (float) (Math
+							.floor(10000 * perfection / hitobjectscompleted)
+							/ 100);
 				}
 			}
 		}
@@ -250,7 +257,10 @@ public class RhythmState extends DefaultGameState {
 				// changes hitobject click state
 				hitobjects.set(hitobjects.indexOf(hitobject), new HitObject(hitobject.x,
 						hitobject.y, hitobject.radius, hitobject.duration, true));
-				points++; // increments points
+				if (Math.abs(hitobject.duration) <= LENIENCE_TIME) {
+					points++; // increments points
+					perfection += 1.0 - Math.abs(hitobject.duration) / LENIENCE_TIME;
+				}
 				combo++; // increases combo
 				break; // breaks out of loop so that only one hit object is clicked at
 						// once

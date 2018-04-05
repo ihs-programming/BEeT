@@ -1,17 +1,12 @@
 package test;
 
 import org.junit.Test;
-import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.geom.Vector2f;
 
 import game.OsuPixels;
+import junit.framework.Assert;
 
 public class OsuPixelsTest {
-
-	@Test
-	public void test() {
-		// TODO: Integrate
-	}
 
 	/**
 	 * Tests if OsuPixels returns the right vectors.
@@ -23,19 +18,20 @@ public class OsuPixelsTest {
 	 *            The game container, used for osupixel conversion.
 	 * @return Returns whether or not the test was successful.
 	 */
-	public boolean testOsuPixels(GameContainer gc) {
-		OsuPixels osupixelconverter = new OsuPixels();
+	@Test
+	public void testOsuPixels() {
+		OsuPixels osupixelconverter = new OsuPixels(new MockScreen(1024, 568));
 		for (int x = 0; x <= 512; x++) {
 			for (int y = 0; y <= 384; y++) {
 				Vector2f test = new Vector2f(x, y);
-				test = osupixelconverter.osuPixeltoXY(gc, test);
-				test = osupixelconverter.XYtoOsuPixel(gc, test);
-				if ((int) test.x != x || (int) test.y != y) {
-					return false;
+				test = osupixelconverter.osuPixeltoXY(test);
+				test = osupixelconverter.XYtoOsuPixel(test);
+				if ((int) test.x != x || (int) (test.y + .5) != y) {
+					Assert.fail(String.format("calculated: %f %f instead of %d %d",
+							test.x, test.y, x, y));
 				}
 			}
 		}
-		return true;
 	}
 
 }

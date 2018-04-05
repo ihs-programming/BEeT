@@ -144,9 +144,9 @@ public class RhythmState extends DefaultGameState {
 		g.fill(new Rectangle(0, 0, gc.getWidth(), gc.getHeight()));
 
 		// this for loop draws all the particles
-		OsuPixels osupixelconverter = new OsuPixels();
+		OsuPixels osupixelconverter = new OsuPixels(new GameScreen(gc));
 		for (Particle particle : particles) {
-			Vector2f center = osupixelconverter.osuPixeltoXY(gc,
+			Vector2f center = osupixelconverter.osuPixeltoXY(
 					new Vector2f(particle.x, particle.y));
 
 			g.setColor(particle.getColor());
@@ -154,10 +154,10 @@ public class RhythmState extends DefaultGameState {
 		}
 
 		// this for loop draws all the hit objects
-		float scalefactor = osupixelconverter.getScaleFactor(gc);
+		float scalefactor = osupixelconverter.getScaleFactor();
 		for (int index = 0; index < hitobjects.size(); index++) {
 			HitObject hitobject = hitobjects.get(index);
-			Vector2f currentcirclepos = osupixelconverter.osuPixeltoXY(gc,
+			Vector2f currentcirclepos = osupixelconverter.osuPixeltoXY(
 					new Vector2f(hitobject.x, hitobject.y)); // converts from osupixels to
 																// real display position
 			if (index != hitobjects.size() - 1) { // check to make sure hitobject is not
@@ -166,7 +166,7 @@ public class RhythmState extends DefaultGameState {
 				g.setColor(Color.white);
 
 				// draws a line in between consecutive hit objects
-				Vector2f nextcirclepos = osupixelconverter.osuPixeltoXY(gc, new Vector2f(
+				Vector2f nextcirclepos = osupixelconverter.osuPixeltoXY(new Vector2f(
 						hitobjects.get(index + 1).x, hitobjects.get(index + 1).y)); // converts
 																					// from
 																					// osupixels
@@ -280,13 +280,13 @@ public class RhythmState extends DefaultGameState {
 
 	public void click() {
 		int x = inp.getMouseX(), y = inp.getMouseY();
-		OsuPixels osupixelstoxy = new OsuPixels();
-		float scalefactor = osupixelstoxy.getScaleFactor(gamecontainer);
+		OsuPixels osupixelstoxy = new OsuPixels(new GameScreen(gamecontainer));
+		float scalefactor = osupixelstoxy.getScaleFactor();
 		for (HitObject hitobject : hitobjects) {
 			// checks if current circle has already been clicked, then checks if click is
 			// within the circle
 			if (!hitobject.clicked && new Vector2f(x, y)
-					.distance(osupixelstoxy.osuPixeltoXY(gamecontainer,
+					.distance(osupixelstoxy.osuPixeltoXY(
 							new Vector2f(hitobject.x, hitobject.y))) < innerRadius
 									* scalefactor) {
 				// changes hitobject click state

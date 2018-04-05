@@ -1,6 +1,5 @@
 package game;
 
-import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.geom.Vector2f;
 
 /**
@@ -9,6 +8,13 @@ import org.newdawn.slick.geom.Vector2f;
  *
  */
 public class OsuPixels {
+
+	private final Screen gc;
+
+	public OsuPixels(Screen gc) {
+		this.gc = gc;
+	}
+
 	/**
 	 * Converts a vector containing osupixel coordinates to a vector containing
 	 * display coordinates.
@@ -22,10 +28,10 @@ public class OsuPixels {
 	 * @return Returns a vector containing the converted display coordinates of the
 	 *         osupixel coordinate vector.
 	 */
-	public Vector2f osuPixeltoXY(GameContainer gc, Vector2f osupixels) {
+	public Vector2f osuPixeltoXY(Vector2f osupixels) {
 		float newx = osupixels.x;
 		float newy = osupixels.y;
-		float scalefactor = getScaleFactor(gc);
+		float scalefactor = getScaleFactor();
 		// add padding on the sides
 		newx += 64.0;
 		newy += 48.0;
@@ -55,8 +61,8 @@ public class OsuPixels {
 	 * @return Returns a vector containing the converted osupixel coordinates of the
 	 *         display coordinate vector.
 	 */
-	public Vector2f XYtoOsuPixel(GameContainer gc, Vector2f convertedvector) {
-		float scalefactor = (float) (1.0 / getScaleFactor(gc));
+	public Vector2f XYtoOsuPixel(Vector2f convertedvector) {
+		float scalefactor = (float) (1.0 / getScaleFactor());
 		if ((double) gc.getWidth() / gc.getHeight() >= 640.0 / 480.0) {
 			convertedvector = new Vector2f(
 					convertedvector.x - (gc.getWidth() - 640 / scalefactor) / 2,
@@ -88,9 +94,9 @@ public class OsuPixels {
 	 *         and the height of a 640x480px display. If the screen width to screen
 	 *         height ratio is less than that of a 640x480px display, returns the
 	 *         float ratio between the screen width and that of a 640x480px display.
-	 * 
+	 *
 	 */
-	protected float getScaleFactor(GameContainer gc) {
+	protected float getScaleFactor() {
 		int screenheight = gc.getHeight();
 		int screenwidth = gc.getWidth();
 		float scalefactor;

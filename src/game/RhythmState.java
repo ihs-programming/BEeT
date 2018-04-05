@@ -2,6 +2,7 @@ package game;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -61,6 +62,7 @@ public class RhythmState extends DefaultGameState {
 	private long starttime = System.currentTimeMillis(); // initial time
 	private long songtime = 0; // time since beginning of the song, in ms
 
+	private HashSet<Particle> particles = new HashSet<>();
 	private CopyOnWriteArrayList<HitObject> hitobjects = new CopyOnWriteArrayList<>();
 	private LinkedList<Beat> beatmap = new LinkedList<>();
 	private int beatmapindex = 0;
@@ -140,8 +142,17 @@ public class RhythmState extends DefaultGameState {
 		g.setColor(new Color(0, 0, 0, overlayopacity));
 		g.fill(new Rectangle(0, 0, gc.getWidth(), gc.getHeight()));
 
-		// this for loop draws all the hit objects
+		// this for loop draws all the particles
 		OsuPixels osupixelconverter = new OsuPixels();
+		for (Particle particle : particles) {
+			Vector2f center = osupixelconverter.osuPixeltoXY(gc,
+					new Vector2f(particle.x, particle.y));
+
+			g.setColor(particle.getColor());
+			g.fill(new Circle(center.x, center.y, particle.getRadius()));
+		}
+
+		// this for loop draws all the hit objects
 		float scalefactor = osupixelconverter.getScaleFactor(gc);
 		for (int index = 0; index < hitobjects.size(); index++) {
 			HitObject hitobject = hitobjects.get(index);
@@ -222,6 +233,16 @@ public class RhythmState extends DefaultGameState {
 			beatmapindex++;
 		}
 
+		HashSet<Particle> toDelete = new HashSet<>();
+		for (Particle particle : particles) {
+			particle.update(delta);
+			if (particle.isDead()) {
+				toDelete.add(particle);
+			}
+		}
+		for (Particle p : toDelete) {
+			particles.remove(p);
+		}
 		for (HitObject hitobject : hitobjects) {
 			int index = hitobjects.indexOf(hitobject);
 
@@ -274,6 +295,7 @@ public class RhythmState extends DefaultGameState {
 					perfection += 1.0 - Math.abs(hitobject.duration) / LENIENCE_TIME;
 					combo++; // increases combo
 				}
+				particles.add(new Particle(hitobject.x, hitobject.y, hitobject.radius, hitobject.duration, false));
 				break; // breaks out of loop so that only one hit object is clicked at
 						// once
 			}

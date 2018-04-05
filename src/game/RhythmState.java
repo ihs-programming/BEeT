@@ -46,6 +46,7 @@ public class RhythmState extends DefaultGameState {
 	private float timescale = .08f; // rate at which approach circles shrink. doesn't
 									// change the time circles are on screen, however
 	private int points = 0; // total number of points
+	private int hits = 0; // total number of completed circles
 	private float perfection = 0; // perfection points
 	private int combo = 0; // current combo
 	private int hitobjectscompleted = 0; // number of passed hitobjects, includes both hit
@@ -263,7 +264,7 @@ public class RhythmState extends DefaultGameState {
 						hitobject.duration, hitobject.clicked));
 				hitobjects.remove(index);
 				hitobjectscompleted++;
-				hitpercent = (float) (Math.floor(10000 * points / hitobjectscompleted)
+				hitpercent = (float) (Math.floor(10000 * hits / hitobjectscompleted)
 						/ 100);
 				perfectionpercent = (float) (Math
 						.floor(10000 * perfection / hitobjectscompleted)
@@ -295,6 +296,7 @@ public class RhythmState extends DefaultGameState {
 					// Formula: Base score of a hit + Base score of a hit
 					// * (Combo multiplier * Difficulty multiplier * Mod multiplier) / 25
 					points += 50 + 50 * (combo * 0.5 * 1) / 25; // increments points
+					hits++;
 					perfection += 1.0 - Math.abs(hitobject.duration) / LENIENCE_TIME;
 					combo++; // increases combo
 				}

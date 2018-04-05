@@ -3,13 +3,24 @@ package game;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.geom.Vector2f;
 
+/**
+ *
+ * @author William Ball
+ *
+ */
 public class OsuPixels {
 	/**
-	 * Converts osupixels to display coordinates
+	 * Converts a vector containing osupixel coordinates to a vector containing
+	 * display coordinates.
 	 *
 	 * @param gc
+	 *            The game container, used to find the dimensions of the game
+	 *            window.
 	 * @param osupixels
-	 * @return
+	 *            The vector, in osupixel coordinates, to be converted to display
+	 *            coordinates.
+	 * @return Returns a vector containing the converted display coordinates of the
+	 *         osupixel coordinate vector.
 	 */
 	public Vector2f osuPixeltoXY(GameContainer gc, Vector2f osupixels) {
 		float newx = osupixels.x;
@@ -32,11 +43,17 @@ public class OsuPixels {
 	}
 
 	/**
-	 * Converts display coordinates to osupixels
+	 * Converts a vector containing display coordinates to a vector containing
+	 * osupixel coordinates.
 	 *
 	 * @param gc
+	 *            The game container, used to find the dimensions of the game
+	 *            window.
 	 * @param XYpixels
-	 * @return
+	 *            The vector, in display coordinates, to be converted to osupixel
+	 *            coordinates.
+	 * @return Returns a vector containing the converted osupixel coordinates of the
+	 *         display coordinate vector.
 	 */
 	public Vector2f XYtoOsuPixel(GameContainer gc, Vector2f convertedvector) {
 		float scalefactor = (float) (1.0 / getScaleFactor(gc));
@@ -59,6 +76,20 @@ public class OsuPixels {
 		return vector;
 	}
 
+	/**
+	 * Determines the scale factor to use when converting osupixel coordinates to
+	 * display coordinates.
+	 *
+	 * @param gc
+	 *            The game container, used to find the dimensions of the game
+	 *            window.
+	 * @return If the screen width to screen height ratio is greater than that of a
+	 *         640x480px display, returns the float ratio between the screen height
+	 *         and the height of a 640x480px display. If the screen width to screen
+	 *         height ratio is less than that of a 640x480px display, returns the
+	 *         float ratio between the screen width and that of a 640x480px display.
+	 * 
+	 */
 	protected float getScaleFactor(GameContainer gc) {
 		int screenheight = gc.getHeight();
 		int screenwidth = gc.getWidth();

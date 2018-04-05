@@ -26,7 +26,8 @@ public class Particle extends HitObject {
 	}
 
 	public Color getColor() {
-		return new Color(0, 255, 0, 155 - tick);
+		return clicked ? new Color(0, 255, 0, 155 - tick)
+				: new Color(255, 0, 0, 155 - tick);
 	}
 
 	/**

@@ -259,6 +259,8 @@ public class RhythmState extends DefaultGameState {
 				if (!hitobject.clicked) {
 					combo = 0;
 				}
+				particles.add(new Particle(hitobject.x, hitobject.y, hitobject.radius,
+						hitobject.duration, hitobject.clicked));
 				hitobjects.remove(index);
 				hitobjectscompleted++;
 				hitpercent = (float) (Math.floor(10000 * points / hitobjectscompleted)
@@ -290,11 +292,12 @@ public class RhythmState extends DefaultGameState {
 				hitobjects.set(hitobjects.indexOf(hitobject), new HitObject(hitobject.x,
 						hitobject.y, hitobject.radius, hitobject.duration, true));
 				if (Math.abs(hitobject.duration) <= LENIENCE_TIME) {
-					points++; // increments points
+					// Formula: Base score of a hit + Base score of a hit
+					// * (Combo multiplier * Difficulty multiplier * Mod multiplier) / 25
+					points += 50 + 50 * (combo * 0.5 * 1) / 25; // increments points
 					perfection += 1.0 - Math.abs(hitobject.duration) / LENIENCE_TIME;
 					combo++; // increases combo
 				}
-				particles.add(new Particle(hitobject.x, hitobject.y, hitobject.radius, hitobject.duration, false));
 				break; // breaks out of loop so that only one hit object is clicked at
 						// once
 			}

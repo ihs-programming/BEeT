@@ -1,16 +1,18 @@
-package utils;
+package test;
 
+import org.junit.Test;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.geom.Vector2f;
 
 import game.OsuPixels;
 
-/**
- *
- * @author William Ball
- *
- */
-public class UnitTesting {
+public class OsuPixelsTest {
+
+	@Test
+	public void test() {
+		// TODO: Integrate
+	}
+
 	/**
 	 * Tests if OsuPixels returns the right vectors.
 	 * <p>
@@ -35,4 +37,5 @@ public class UnitTesting {
 		}
 		return true;
 	}
+
 }
